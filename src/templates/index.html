@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple Scoring Server</title>
+    <style>
+        .body {
+            padding-top: 50px;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            background-color: #333;
+        }
+
+        .teams-list {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            width: 100%;
+            -webkit-justify-content: space-around;
+            -ms-flex-pack: distribute;
+            justify-content: space-around;
+        }
+
+        .team {
+            margin: 20px;
+            padding: 20px;
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
+            border-style: solid;
+            border-width: 5px;
+            border-color: #00ffe1;
+            border-radius: 10px;
+        }
+
+        .text-block {
+            font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+            color: #fff;
+        }
+
+        .text-block.ip {
+            margin-left: 20px;
+        }
+
+        .text-block.bold {
+            font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+            font-size: 21px;
+            line-height: 28px;
+            font-weight: 700;
+        }
+
+        .flag-box {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            margin-top: 50px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        .field-label {
+            color: #fff;
+        }
+
+        .text-field {
+            width: 300px;
+            margin-bottom: 20px;
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+
+        .form {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        .submit-button {
+            padding: 10px 50px;
+            border-radius: 10px;
+            background-color: #000;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body class="body">
+    <div class="teams-list">
+        <!--for each team in config["teams"]-->
+        {% for name,team in config["teams"].items() %}
+            <div class="team">
+                <div class="text-block bold">{{name}} team</div>
+                <div class="text-block bold">Score: {{team["score"]}}</div>
+                <div class="text-block">Instances:</div>
+                {% for ip,instance in config["instances"].items() %}
+                    {% if instance["team"] == name %}
+                        <div class="text-block ip">{{ip}} : {{instance["type"]}}</div>
+                    {% endif %}
+                {% endfor %}
+                <div class="flag-box">
+                    <div class="w-form">
+                        <form method="post" action="/submit" class="form">
+                            <input type="text" class="text-field w-input" name="flag" placeholder="Flag submission" required="" />
+                            <input type="hidden" name="team" value="{{name}}" />
+                            <input type="submit" value="Submit" class="submit-button w-button" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

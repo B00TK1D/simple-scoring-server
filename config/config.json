@@ -1,0 +1,43 @@
+{
+    "intervals": {
+        "flag_plant": 60,
+        "flag_check": 30
+    },
+    "points": {
+        "uptime": 100,
+        "flag": 100
+    },
+    "teams": {
+        "red" : {
+            "score": 0,
+            "captured": []
+        },
+        "blue" : {
+            "score": 0,
+            "captured": []
+        }
+    },
+    "services": {
+        "smb": {
+            "plugin": "smb"
+        }
+    }, 
+    "instances" : {
+        "10.0.0.2": {
+            "type": "smb",
+            "team": "red",
+            "port": 445,
+            "flag": "flag{testred}",
+            "username": "intel",
+            "password": "intel123"
+        },
+        "10.0.1.2": {
+            "type": "smb",
+            "team": "blue",
+            "port": 445,
+            "flag": "flag{testblue}",
+            "username": "intel",
+            "password": "intel123"
+        }
+    }
+}
