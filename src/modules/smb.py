@@ -6,39 +6,34 @@
 
 # Imports
 from smb.SMBConnection import SMBConnection
-
+import os
+import urllib
+from smb.SMBHandler import SMBHandler
 
 def plant(flag, ip, port, username, password):
     # Plant a flag on the server
     # Return True if the flag was planted, False otherwise
     # Send the SMB command to delete the flag located at intel/intel in the SMB share general
 
-    # Connect to the SMB server
     try:
-        conn = SMBConnection(username, password, "client", "server", use_ntlm_v2 = True)
+        # Connect to the SMB server
+        conn = SMBConnection(username, password, "client", "server", use_ntlm_v2=True)
         conn.connect(ip, port)
-    except Exception as e:
-        print("Error connecting to SMB server: " + str(e))
-        return False
 
-    # Open the SMB share
-    try:
-        conn.connectTree("general")
-    except Exception as e:
-        print("Error connecting to SMB share: " + str(e))
-        return False
-    
-    # Write the flag to the file intel/intel
-    try:
-        conn.storeFile("general", "intel/intel", flag)
+        # Define the path to the file
+        file_path = os.path.join("intel/intel")
+
+        # Write the flag to a temporary file
+        f = open("tmp", "w")
+        f.write(flag)
+        f.close()
+        f = open("tmp", "rb")
+        conn.storeFile("general", file_path, f)
+
+        return True
     except Exception as e:
         print("Error writing flag to SMB share: " + str(e))
         return False
-
-    # Close the SMB connection
-    conn.close()
-
-    return True
 
 def check(flag, ip, port, username, password):
     # Check if a flag is still on the server
@@ -47,33 +42,25 @@ def check(flag, ip, port, username, password):
 
     # Connect to the SMB server
     try:
-        conn = SMBConnection(username, password, "client", "server", use_ntlm_v2 = True)
+        # Connect to the SMB server
+        conn = SMBConnection(username, password, "client", "server", use_ntlm_v2=True)
         conn.connect(ip, port)
-    except Exception as e:
-        print("Error connecting to SMB server: " + str(e))
-        return False
 
-    # Open the SMB share
-    try:
-        conn.connectTree("general")
-    except Exception as e:
-        print("Error connecting to SMB share: " + str(e))
-        return False
-    
-    # Read the flag from the file intel/intel
-    try:
-        data = conn.retrieveFile("general", "intel/intel")
+        # Open the flag file
+        opener = urllib.request.build_opener(SMBHandler)
+        f = opener.open("smb://" + username + ":" + password + "@" + ip + ":" + str(port) + "/general/intel/intel")
+        data = f.read().decode("utf-8")
+        f.close()
+
+        # Check if the flag is still on the server
+        if data == flag:
+            return True
+        else:
+            #print("Found flag: " + data + " instead of " + flag)
+            return False
+
     except Exception as e:
         print("Error reading flag from SMB share: " + str(e))
-        return False
-
-    # Close the SMB connection
-    conn.close()
-
-    # Check if the flag is still on the server
-    if data == flag:
-        return True
-    else:
         return False
 
 

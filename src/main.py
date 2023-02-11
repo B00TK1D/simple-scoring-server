@@ -90,8 +90,9 @@ def flag_check_thread():
     """Thread that checks flags based on config.json interval"""
     global config, boxes
     while True:
+        time.sleep(config["intervals"]["flag_check"] // 2)
         check_flags()
-        time.sleep(config["intervals"]["flag_check"])
+        time.sleep(config["intervals"]["flag_check"] // 2)
     
 
 def flag_plant_thread():
